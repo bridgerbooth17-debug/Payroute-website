@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayRoute | FedEx Contractor Payroll Automation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --midnight: #1a2332;
+            --navy: #2d3e50;
+            --aqua: #00d4ff;
+            --aqua-light: #4de3ff;
+            --white: #ffffff;
+            --gray-light: #f8f9fa;
+            --gray: #64748b;
+            --dark-bg: #15202b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--gray-light);
+            color: var(--midnight);
+            overflow-x: hidden;
+        }
+
+        /* Animated background grid */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 32px 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 48px;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--aqua-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .main-nav a {
+            color: var(--midnight);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .main-nav a:not(.nav-cta)::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--aqua);
+            transition: width 0.3s ease;
+        }
+
+        .main-nav a:not(.nav-cta):hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--aqua-light) 100%);
+            color: var(--midnight);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 700;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .mobile-menu-toggle span {
+            width: 28px;
+            height: 3px;
+            background: var(--midnight);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 80px 0;
+        }
+
+        .hero-content {
+            max-width: 750px;
+        }
+
+        .hero h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 92px;
+            line-height: 0.95;
+            letter-spacing: 2px;
+            margin-bottom: 32px;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .hero h1 .highlight {
+            color: var(--aqua);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero h1 .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: var(--aqua-light);
+            opacity: 0.2;
+            z-index: -1;
+            animation: expandWidth 0.8s ease-out 1.2s both;
+        }
+
+        @keyframes expandWidth {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .hero p {
+            font-size: 22px;
+            line-height: 1.6;
+            color: var(--gray-text);
+            font-weight: 300;
+            margin-bottom: 48px;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 18px 48px;
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--aqua-light) 100%);
+            color: var(--midnight);
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out 0.6s both;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 120px 0;
+            background: var(--white);
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 64px;
+            letter-spacing: 3px;
+            margin-bottom: 24px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 20px;
+            color: var(--gray-text);
+            margin-bottom: 80px;
+            font-weight: 300;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .service-card {
+            background: var(--white);
+            border: 2px solid #e2e8f0;
+            padding: 48px 36px;
+            border-radius: 24px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.05), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .service-card:hover::before {
+            left: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--aqua);
+            box-shadow: 0 12px 48px rgba(0, 212, 255, 0.2);
+        }
+
+        .service-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--aqua-light) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 24px;
+        }
+
+        .service-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            color: var(--midnight);
+            font-weight: 700;
+        }
+
+        .service-card p {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--gray-text);
+            font-weight: 300;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .pricing-card {
+            background: var(--white);
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 48px 36px;
+            transition: all 0.4s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--aqua);
+            box-shadow: 0 16px 48px rgba(0, 212, 255, 0.2);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--aqua);
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(77, 227, 255, 0.08));
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-8px);
+            border-color: var(--aqua);
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.25);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--aqua-light) 100%);
+            color: var(--midnight);
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .pricing-header h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 36px;
+            letter-spacing: 2px;
+            color: var(--midnight);
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .pricing-card.featured .pricing-header h3 {
+            color: var(--aqua);
+        }
+
+        .price {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+
+        .currency {
+            font-size: 32px;
+            font-weight: 600;
+            margin-top: 8px;
+            color: var(--midnight);
+        }
+
+        .amount {
+            font-size: 72px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            color: var(--midnight);
+            letter-spacing: -2px;
+        }
+
+        .amount-custom {
+            font-size: 56px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            color: var(--midnight);
+            letter-spacing: 2px;
+        }
+
+        .period {
+            font-size: 18px;
+            color: var(--gray-text);
+            margin-top: 8px;
+            margin-left: 4px;
+        }
+
+        .plan-description {
+            color: var(--gray-text);
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        .pricing-features {
+            flex: 1;
+            margin-bottom: 32px;
+        }
+
+        .pricing-features .feature {
+            padding: 12px 0;
+            color: var(--midnight);
+            font-size: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 400;
+        }
+
+        .pricing-features .feature:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-button {
+            width: 100%;
+            padding: 16px;
+            background: var(--white);
+            border: 2px solid var(--aqua);
+            color: var(--aqua);
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pricing-button:hover {
+            background: var(--aqua);
+            color: var(--midnight);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+        }
+
+        .pricing-card.featured .pricing-button {
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--aqua-light) 100%);
+            border-color: var(--aqua);
+            color: var(--midnight);
+        }
+
+        .pricing-card.featured .pricing-button:hover {
+            background: linear-gradient(135deg, var(--aqua-light) 0%, var(--aqua) 100%);
+            border-color: var(--aqua-light);
+            color: var(--midnight);
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.4);
+        }
+
+        .pricing-note {
+            text-align: center;
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .pricing-note p {
+            color: var(--gray-text);
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        /* Why Choose Section */
+        .why-choose {
+            padding: 120px 0;
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            margin-top: 60px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 24px;
+            background: var(--white);
+            border-radius: 12px;
+            border-left: 3px solid var(--aqua);
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-item:hover {
+            background: var(--gray-light);
+            transform: translateX(8px);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 28px;
+            color: var(--aqua);
+            min-width: 40px;
+        }
+
+        .feature-text h4 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--midnight);
+        }
+
+        .feature-text p {
+            font-size: 15px;
+            color: var(--gray-text);
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--aqua-light) 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            animation: float 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .cta-section h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 56px;
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+            color: var(--midnight);
+            font-weight: 700;
+        }
+
+        .cta-section p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            color: var(--midnight);
+        }
+
+        .cta-button-secondary {
+            display: inline-block;
+            padding: 18px 48px;
+            background: var(--midnight);
+            color: var(--white);
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .cta-button-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26, 35, 50, 0.4);
+            background: var(--navy);
+        }
+
+        /* Footer */
+        footer {
+            padding: 48px 0;
+            text-align: center;
+            border-top: 2px solid #e2e8f0;
+            background: var(--white);
+        }
+
+        footer p {
+            color: var(--gray-text);
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        /* Responsive */
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--white);
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: slideUp 0.4s ease-out;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--midnight);
+            font-size: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .modal-close:hover {
+            background: var(--gray-light);
+            transform: rotate(90deg);
+        }
+
+        .modal-content h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 42px;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            color: var(--aqua);
+            font-weight: 700;
+        }
+
+        .modal-content p {
+            color: var(--gray-text);
+            margin-bottom: 32px;
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--midnight);
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px;
+            background: var(--gray-light);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            color: var(--midnight);
+            font-size: 16px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--aqua);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: var(--gray);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--aqua-light) 100%);
+            color: var(--midnight);
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+        }
+
+        .submit-button:hover {
+            background: linear-gradient(135deg, var(--aqua-light) 0%, var(--aqua) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 212, 255, 0.4);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 32px;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .success-message .icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .success-message h4 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 36px;
+            color: var(--aqua);
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .success-message p {
+            font-size: 16px;
+            color: var(--gray-text);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 56px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 48px;
+            }
+
+            .logo {
+                font-size: 36px;
+            }
+
+            .main-nav {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 70%;
+                height: 100vh;
+                background: var(--white);
+                flex-direction: column;
+                justify-content: center;
+                gap: 32px;
+                transition: right 0.4s ease;
+                border-left: 2px solid #e2e8f0;
+                box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+            }
+
+            .main-nav.active {
+                right: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .services-grid,
+            .features-list {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+
+            .pricing-card.featured:hover {
+                transform: translateY(-8px);
+            }
+
+            .cta-section h2 {
+                font-size: 40px;
+            }
+
+            .modal-content {
+                padding: 32px 24px;
+            }
+
+            .modal-content h3 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">PAYROUTE</div>
+                <nav class="main-nav">
+                    <a href="#services">Services</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#why-choose">Why Us</a>
+                    <a href="#contact" class="nav-cta">Get Started</a>
+                </nav>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Payroll Automation for <span class="highlight">FedEx Contractors</span></h1>
+                <p>Streamline your back-office operations with intelligent automation. We handle the complexity so you can focus on growing your business.</p>
+                <button class="cta-button" onclick="document.getElementById('openModal').click()">Get Started Today</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="services" id="services">
+        <div class="container">
+            <h2 class="section-title">What We Do</h2>
+            <p class="section-subtitle">End-to-end solutions designed specifically for FedEx contractors</p>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">💰</div>
+                    <h3>Automated Payroll</h3>
+                    <p>Eliminate manual calculations and errors. Our system processes driver pay, deductions, and tax withholdings automatically, ensuring accuracy and compliance every pay period.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">📊</div>
+                    <h3>Back-Office Management</h3>
+                    <p>From invoicing to expense tracking, we automate the administrative tasks that consume your time. Focus on operations while we handle the paperwork.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">⚡</div>
+                    <h3>Real-Time Reporting</h3>
+                    <p>Access comprehensive dashboards and reports instantly. Track labor costs, contractor performance, and financial metrics with complete visibility.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2 class="section-title">Pricing Plans</h2>
+            <p class="section-subtitle">Choose the plan that fits your operation</p>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Starter</h3>
+                        <div class="price">
+                            <span class="currency">$</span>
+                            <span class="amount">299</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">+ $4.50 per employee per payroll process</p>
+                        <p class="plan-description">Perfect for small operations (up to 25 drivers)</p>
+                    </div>
+                    <div class="pricing-features">
+                        <div class="feature">✓ Up to 25 drivers</div>
+                        <div class="feature">✓ Automated payroll processing</div>
+                        <div class="feature">✓ Basic reporting dashboard</div>
+                        <div class="feature">✓ Email support</div>
+                        <div class="feature">✓ Tax compliance management</div>
+                    </div>
+                    <button class="pricing-button" onclick="document.getElementById('openModal').click()">Get Started</button>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="popular-badge">MOST POPULAR</div>
+                    <div class="pricing-header">
+                        <h3>Professional</h3>
+                        <div class="price">
+                            <span class="currency">$</span>
+                            <span class="amount">599</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">+ $4.50 per employee per payroll process</p>
+                        <p class="plan-description">For growing contractors (up to 100 drivers)</p>
+                    </div>
+                    <div class="pricing-features">
+                        <div class="feature">✓ Up to 100 drivers</div>
+                        <div class="feature">✓ Automated payroll processing</div>
+                        <div class="feature">✓ Advanced analytics & reporting</div>
+                        <div class="feature">✓ Priority phone & email support</div>
+                        <div class="feature">✓ Tax compliance management</div>
+                        <div class="feature">✓ Custom integrations</div>
+                        <div class="feature">✓ Dedicated account manager</div>
+                    </div>
+                    <button class="pricing-button" onclick="document.getElementById('openModal').click()">Get Started</button>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Enterprise</h3>
+                        <div class="price">
+                            <span class="amount-custom">Custom</span>
+                        </div>
+                        <p class="plan-description">For large-scale operations</p>
+                    </div>
+                    <div class="pricing-features">
+                        <div class="feature">✓ Unlimited drivers</div>
+                        <div class="feature">✓ Automated payroll processing</div>
+                        <div class="feature">✓ Enterprise-grade analytics</div>
+                        <div class="feature">✓ 24/7 priority support</div>
+                        <div class="feature">✓ Tax compliance management</div>
+                        <div class="feature">✓ Custom integrations & API</div>
+                        <div class="feature">✓ Dedicated account team</div>
+                        <div class="feature">✓ White-label options</div>
+                        <div class="feature">✓ On-site training</div>
+                    </div>
+                    <button class="pricing-button" onclick="document.getElementById('openModal').click()">Contact Sales</button>
+                </div>
+            </div>
+
+            <div class="pricing-note">
+                <p>All plans include a 14-day free trial. No credit card required. Cancel anytime.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="why-choose" id="why-choose">
+        <div class="container">
+            <h2 class="section-title">Why PayRoute?</h2>
+            <p class="section-subtitle">Built by logistics experts, for logistics professionals</p>
+
+            <div class="features-list">
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div class="feature-text">
+                        <h4>FedEx-Specialized</h4>
+                        <p>Our platform is built exclusively for FedEx contractors, with deep understanding of your unique operational requirements and compliance needs.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div class="feature-text">
+                        <h4>Seamless Integration</h4>
+                        <p>Connect with your existing systems effortlessly. We integrate with FedEx portals and popular accounting software to create a unified workflow.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div class="feature-text">
+                        <h4>Reduce Overhead</h4>
+                        <p>Slash administrative costs by up to 70%. Automation means fewer errors, less time spent on paperwork, and more resources for business growth.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div class="feature-text">
+                        <h4>Compliance Guaranteed</h4>
+                        <p>Stay compliant with federal, state, and local regulations. Our system automatically updates to reflect the latest tax laws and labor requirements.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div class="feature-text">
+                        <h4>Dedicated Support</h4>
+                        <p>Our team knows the logistics industry inside and out. Get expert assistance whenever you need it, with support that understands your business.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div class="feature-text">
+                        <h4>Scalable Solution</h4>
+                        <p>Whether you manage 10 drivers or 1,000, PayRoute grows with your business. Add routes and contractors without increasing administrative burden.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <h2>Ready to Simplify Your Operations?</h2>
+            <p>Join hundreds of FedEx contractors who've automated their payroll and back-office work with PayRoute.</p>
+            <button class="cta-button-secondary" id="openModal">Contact Us</button>
+        </div>
+    </section>
+
+    <!-- Contact Modal -->
+    <div class="modal-overlay" id="contactModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            
+            <div id="formContainer">
+                <h3>Get Started</h3>
+                <p>Fill out the form below and we'll get back to you within 24 hours.</p>
+                
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-button">Submit</button>
+                </form>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                <div class="icon">✓</div>
+                <h4>Thank You!</h4>
+                <p>We've received your information and will contact you shortly.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 PayRoute. All rights reserved. | Specialized payroll automation for FedEx contractors.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu functionality
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mainNav = document.querySelector('.main-nav');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            mobileMenuToggle.classList.toggle('active');
+            mainNav.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.main-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuToggle.classList.remove('active');
+                mainNav.classList.remove('active');
+            });
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('contactModal');
+        const openModalBtn = document.getElementById('openModal');
+        const closeModalBtn = document.getElementById('closeModal');
+        const contactForm = document.getElementById('contactForm');
+        const formContainer = document.getElementById('formContainer');
+        const successMessage = document.getElementById('successMessage');
+
+        // Open modal
+        openModalBtn.addEventListener('click', () => {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Close modal
+        const closeModal = () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            // Reset form after closing
+            setTimeout(() => {
+                formContainer.style.display = 'block';
+                successMessage.classList.remove('active');
+                contactForm.reset();
+            }, 300);
+        };
+
+        closeModalBtn.addEventListener('click', closeModal);
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // Handle form submission
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            
+            // Here you would typically send this data to your backend
+            console.log('Form submitted:', { email, phone });
+            
+            // Show success message
+            formContainer.style.display = 'none';
+            successMessage.classList.add('active');
+            
+            // Auto-close modal after 3 seconds
+            setTimeout(() => {
+                closeModal();
+            }, 3000);
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease-out forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.service-card, .feature-item, .pricing-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
