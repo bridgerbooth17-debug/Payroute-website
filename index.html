@@ -950,18 +950,17 @@
         }
     </style>
     
-    <!-- Supabase Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Client - Using stable version 1.x -->
+    <script src="https://unpkg.com/@supabase/supabase-js@1"></script>
     <script>
-        // Initialize Supabase
+        // Initialize Supabase with version 1.x syntax
         const SUPABASE_URL = 'https://xnpjfwbkgxlloqqklydd.supabase.co'
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucGpmd2JrZ3hsbG9xcWtseWRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MDA2MDksImV4cCI6MjA4MjQ3NjYwOX0.NvN5pR22AmpODgISSg4cJYx4CPJSCOdsNYNccMVOKZM'
         
         // Create Supabase client
-        const { createClient } = supabase
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
         
-        console.log('Supabase initialized successfully')
+        console.log('Supabase v1 initialized successfully!')
     </script>
 </head>
 <body>
@@ -1277,7 +1276,7 @@
             
             try {
                 // Save to Supabase database
-                const { data, error } = await supabaseClient
+                const { data, error } = await _supabase
                     .from('contact_leads')
                     .insert([
                         { email: email, phone: phone, source: 'website' }
