@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -954,10 +953,15 @@
     <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Initialize Supabase
         const SUPABASE_URL = 'https://xnpjfwbkgxlloqqklydd.supabase.co'
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucGpmd2JrZ3hsbG9xcWtseWRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MDA2MDksImV4cCI6MjA4MjQ3NjYwOX0.NvN5pR22AmpODgISSg4cJYx4CPJSCOdsNYNccMVOKZM'
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        // Create Supabase client
+        const { createClient } = supabase
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        
+        console.log('Supabase initialized successfully')
     </script>
 </head>
 <body>
@@ -1269,29 +1273,37 @@
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
             
-            // Save to Supabase database
-            const { data, error } = await supabase
-                .from('contact_leads')
-                .insert([
-                    { email: email, phone: phone, source: 'website' }
-                ]);
+            console.log('Submitting form with:', { email, phone });
             
-            if (error) {
-                console.error('Error saving lead:', error);
-                alert('There was an error submitting your information. Please try again or email us directly.');
-                return;
+            try {
+                // Save to Supabase database
+                const { data, error } = await supabaseClient
+                    .from('contact_leads')
+                    .insert([
+                        { email: email, phone: phone, source: 'website' }
+                    ]);
+                
+                if (error) {
+                    console.error('Supabase error:', error);
+                    alert('There was an error submitting your information. Please try again or email us directly.');
+                    return;
+                }
+                
+                console.log('Lead saved successfully!', data);
+                
+                // Show success message
+                formContainer.style.display = 'none';
+                successMessage.classList.add('active');
+                
+                // Auto-close modal after 3 seconds
+                setTimeout(() => {
+                    closeModal();
+                }, 3000);
+                
+            } catch (err) {
+                console.error('Unexpected error:', err);
+                alert('An unexpected error occurred. Please try again.');
             }
-            
-            console.log('Lead saved successfully:', data);
-            
-            // Show success message
-            formContainer.style.display = 'none';
-            successMessage.classList.add('active');
-            
-            // Auto-close modal after 3 seconds
-            setTimeout(() => {
-                closeModal();
-            }, 3000);
         });
 
         // Smooth scrolling for anchor links
