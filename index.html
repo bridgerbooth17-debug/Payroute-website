@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -949,6 +950,15 @@
             }
         }
     </style>
+    
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://xnpjfwbkgxlloqqklydd.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucGpmd2JrZ3hsbG9xcWtseWRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MDA2MDksImV4cCI6MjA4MjQ3NjYwOX0.NvN5pR22AmpODgISSg4cJYx4CPJSCOdsNYNccMVOKZM'
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    </script>
 </head>
 <body>
     <div class="bg-grid"></div>
@@ -1253,14 +1263,26 @@
         });
 
         // Handle form submission
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
             
-            // Here you would typically send this data to your backend
-            console.log('Form submitted:', { email, phone });
+            // Save to Supabase database
+            const { data, error } = await supabase
+                .from('contact_leads')
+                .insert([
+                    { email: email, phone: phone, source: 'website' }
+                ]);
+            
+            if (error) {
+                console.error('Error saving lead:', error);
+                alert('There was an error submitting your information. Please try again or email us directly.');
+                return;
+            }
+            
+            console.log('Lead saved successfully:', data);
             
             // Show success message
             formContainer.style.display = 'none';
